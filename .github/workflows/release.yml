@@ -1,0 +1,42 @@
+name: Make a release
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    container: { image: fstlx/xc16 }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: |
+        cd Firmware/busPirate.X
+        prjMakefilesGenerator.sh .
+        make CONF=BusPirate_v3
+        make CONF=BusPirate_v4
+
+    - name: Prepare for release
+      run: |
+        tr [a-z] [A-Z] \
+          < Firmware/busPirate.X/dist/BusPirate_v3/production/busPirate.X.production.hex \
+          > $GITHUB_WORKSPACE/BusPirate_v3.${GITHUB_REF#refs/tags/}.hex
+        tr [a-z] [A-Z] \
+          < Firmware/busPirate.X/dist/BusPirate_v4/production/busPirate.X.production.hex \
+          > $GITHUB_WORKSPACE/BusPirate_v4.${GITHUB_REF#refs/tags/}.hex
+
+
+    - name: Create a github release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        prerelease: true
+        files: BusPirate_*.hex
+        fail_on_unmatched_files: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

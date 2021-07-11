@@ -1,0 +1,44 @@
+name: Make a bootloader release
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'b*' # Push events to matching b*, i.e. b1.0, b20.15.10
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    container: { image: fstlx/xc16 }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build BPv4-bootloader v1
+      run: |
+        cd Bootloaders/BPv4-bootloader/firmware-v1/bpv4-bootloader.X
+        prjMakefilesGenerator.sh .
+        make
+        tr [a-z] [A-Z] \
+          < dist/default/production/bpv4-bootloader.X.production.hex \
+          > $GITHUB_WORKSPACE/BPv4-bootloader.${GITHUB_REF#refs/tags/}.hex
+
+    - name: Build BPv3-bootloader v4.5
+      run: |
+        cd Bootloaders/BPv3-bootloader/firmware-v4.5/ds30loader.X
+        prjMakefilesGenerator.sh .
+        make
+        tr [a-z] [A-Z] \
+          < dist/default/production/ds30loader.X.production.hex \
+          > $GITHUB_WORKSPACE/BPv3-bootloader.${GITHUB_REF#refs/tags/}.hex
+
+
+    - name: Create a github release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        prerelease: true
+        files: BP*.hex
+        fail_on_unmatched_files: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
