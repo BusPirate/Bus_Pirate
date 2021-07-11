@@ -191,3 +191,8 @@ Connect the Bus Pirate transmit pin (TX/MOSI) to the UART device receive pin (RX
 For macros and modes with flow control: CTS is on the CS pin (PIC input from external circuit is passed to FTDI USB->serial chip). RTS is on the CLOCK pin (PIC output mirrors output from FTDI chip). 
 
 Diagram by Uwe Bannow, released under the [GNU free documentation license](http://en.wikipedia.org/wiki/Wikipedia:Text_of_the_GNU_Free_Documentation_License).
+
+External Links
+------------------
+
+- [asciinema.org > connecting to a Raspberry Pi UART via GPIO using a Bus Pirate](https://asciinema.org/a/212988)
