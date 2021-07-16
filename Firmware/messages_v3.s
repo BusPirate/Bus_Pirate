@@ -1076,7 +1076,7 @@ _MSG_CURSOR_RIGHT_str:
 	.section .text.MSG_DESTRUCTIVE_BACKSPACE, code
 	.global _MSG_DESTRUCTIVE_BACKSPACE_str
 _MSG_DESTRUCTIVE_BACKSPACE_str:
-	.pasciz <8>, " ", <8>
+	.pasciz "\x08 \x08"
 
 	; MSG_FINISH_SETUP_PROMPT
 	.section .text.MSG_FINISH_SETUP_PROMPT, code
