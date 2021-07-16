@@ -102,7 +102,7 @@ void jtag(void) {
       uint16_t words = 0;
       while (jtag_read_bit() == LOW) {
         words++;
-        if (words < 250) {
+        if (words > 250) {
           break; // 250 device timout/limit...
         }
       }
